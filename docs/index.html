@@ -171,6 +171,17 @@
     .sound-test-panel button:hover { background: rgba(255,215,0,0.3); }
     .sound-test-panel .stp-mp3 { border-color: rgba(0,150,255,0.5); color: #8cf; }
     .sound-test-panel .stp-close { background: rgba(255,0,0,0.2); border-color: #f44; color: #f88; margin-top: 6px; width: 100%; }
+    @media (max-width: 500px) {
+      body { flex-direction: column; align-items: center; padding: 6px; gap: 6px; }
+      .side-panel { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 3px; }
+      .sg { grid-template-columns: repeat(4, 1fr); }
+      #leaderboard { display: none; }
+      #eventLog { display: none !important; }
+      .container { width: 100% !important; max-width: 100vw !important; }
+      canvas { width: 100% !important; height: auto !important; max-width: 100vw !important; }
+      .stats { gap: 10px; font-size: 12px; }
+      .controls { gap: 6px; }
+    }
   </style>
 </head>
 <body>
