@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.13</title>
+  <title>Ball Rush League v8.0.14</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -25,6 +25,8 @@
       canvas { width: 100% !important; height: auto !important; aspect-ratio: 1 !important; box-sizing: border-box; }
       .stats { gap: 10px; font-size: 12px; }
       .controls { gap: 6px; flex-wrap: wrap; }
+      .start-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; align-items: flex-end !important; padding-bottom: 20px !important; }
+      .start-box { width: 100% !important; max-width: 100% !important; border-radius: 20px 20px 0 0 !important; padding: 20px !important; }
     }
     body {
       background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
@@ -196,7 +198,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.13</div>
+      <div class="subtitle">LEAGUE v8.0.14</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -301,7 +303,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.13';
+const GAME_VERSION = 'v8.0.14';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1483,7 +1485,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.13 loaded');
+console.log('Ball Rush v8.0.14 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
