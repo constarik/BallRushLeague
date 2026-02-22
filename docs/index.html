@@ -207,7 +207,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.43</div>
+      <div class="subtitle">LEAGUE v8.0.44</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -278,9 +278,9 @@
   <div class="result" id="result">
     <h2 data-i18n="youWon">You Won!</h2>
     <div class="amount">$<span id="finalWin">0</span></div>
-    <div id="resultFooter" style="display:none; margin-top:8px; font-size:11px; display:none;">
+    <div id="resultFooter" style="display:none; margin-top:8px; font-size:11px;">
       <div id="seedDisplayResult" style="font-family:monospace; color:#8fb; margin-bottom:4px;"></div>
-      <a href="#" id="verifyLinkBtn" style="color:#4af; font-family:monospace; margin-right:10px;">✅ Verify</a>
+      <a href="#" id="verifyLinkBtn" style="color:#4af; font-family:monospace; margin-right:10px; display:none;">✅ Verify</a>
       <a href="#" id="replayBtnResult" style="color:#88f;">📋 <span data-i18n="copyReplay">Скопировать ссылку</span></a>
     </div>
   </div>
@@ -321,7 +321,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.43';
+const GAME_VERSION = 'v8.0.44';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1393,10 +1393,10 @@ async function startGame(seed) {
   document.getElementById('result').classList.remove('show');
   document.getElementById('replayLink').style.display = 'none';
   document.getElementById('resultFooter').style.display = 'none';
+  document.getElementById('verifyLinkBtn').style.display = 'none';
+  document.getElementById('seedDisplayResult').textContent = '';
   document.getElementById('verifyLinkMobile').style.display = 'none';
   document.getElementById('replayBtnMobile').style.display = 'none';
-  document.getElementById('verifyLinkBtn').onclick = null;
-  document.getElementById('seedDisplayResult').textContent = '';
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
@@ -1442,6 +1442,7 @@ async function endGame() {
           });
           document.getElementById('verifyLink').style.display = 'inline';
           document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false);
+          document.getElementById('verifyLinkBtn').style.display = 'inline';
           document.getElementById('verifyLinkBtn').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
           document.getElementById('verifyLinkMobile').style.display = 'inline';
           document.getElementById('verifyLinkMobile').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
@@ -1580,7 +1581,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.43 loaded');
+console.log('Ball Rush v8.0.44 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
