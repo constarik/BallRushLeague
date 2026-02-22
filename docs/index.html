@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.18</title>
+  <title>Ball Rush League v8.0.19</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -204,7 +204,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.18</div>
+      <div class="subtitle">LEAGUE v8.0.19</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -310,7 +310,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.18';
+const GAME_VERSION = 'v8.0.19';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1344,8 +1344,9 @@ async function startGame(seed) {
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
-  // Show seed and speak phrase
-  document.getElementById('seedDisplay').textContent = t('seed') + ': ' + currentSeed;
+  // Show seed hashed and speak phrase
+  const hashSeed = s => { let h = 0; for(let i=0; i<s.toString().length; i++) h = (Math.imul(31,h)+s.toString().charCodeAt(i))|0; return (h>>>0).toString(16).padStart(8,'0').toUpperCase(); };
+  document.getElementById('seedDisplay').textContent = t('seed') + ': #' + hashSeed(currentSeed);
   speakPhrase();
   
   gameLoop();
@@ -1449,8 +1450,16 @@ document.getElementById('soundBtn').addEventListener('click', () => {
 });
 
 // Info modal
-document.getElementById('infoBtn').addEventListener('click', () => document.getElementById('infoModal').classList.add('show'));
-document.getElementById('infoModal').addEventListener('click', e => { if (e.target === document.getElementById('infoModal')) document.getElementById('infoModal').classList.remove('show'); });
+document.getElementById('infoBtn').addEventListener('click', () => {
+  if (gameRunning) { gameRunning = false; window._infoPaused = true; }
+  document.getElementById('infoModal').classList.add('show');
+});
+document.getElementById('infoModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('infoModal')) {
+    document.getElementById('infoModal').classList.remove('show');
+    if (window._infoPaused) { window._infoPaused = false; gameRunning = true; requestAnimationFrame(gameLoop); }
+  }
+});
 
 // Sound test panel (press T to toggle)
 document.addEventListener('keydown', e => {
@@ -1493,7 +1502,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.18 loaded');
+console.log('Ball Rush v8.0.19 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
