@@ -30,6 +30,9 @@
       body:has(.start-overlay:not(.hidden)) .progressive { visibility: hidden !important; }
       .progressive { display: none !important; }
       #seedDisplay { display: none !important; }
+      #replayLink { display: none !important; }
+      #verifyLink { display: none !important; }
+      #mobileFooter { display: flex !important; }
     }
     body {
       background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
@@ -203,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.41</div>
+      <div class="subtitle">LEAGUE v8.0.42</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -317,7 +320,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.41';
+const GAME_VERSION = 'v8.0.42';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1389,6 +1392,8 @@ async function startGame(seed) {
   document.getElementById('result').classList.remove('show');
   document.getElementById('replayLink').style.display = 'none';
   document.getElementById('resultFooter').style.display = 'none';
+  document.getElementById('verifyLinkMobile').style.display = 'none';
+  document.getElementById('replayBtnMobile').style.display = 'none';
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
@@ -1435,6 +1440,8 @@ async function endGame() {
           document.getElementById('verifyLink').style.display = 'inline';
           document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false);
           document.getElementById('verifyLinkBtn').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
+          document.getElementById('verifyLinkMobile').style.display = 'inline';
+          document.getElementById('verifyLinkMobile').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
         }
         console.log('✅ Validated:', data);
       } else {
@@ -1453,6 +1460,9 @@ async function endGame() {
   document.getElementById('replayLink').style.display = 'block';
   document.getElementById('replayBtnResult').onclick = (e) => { e.preventDefault(); copyToClipboard(replayUrl); };
   document.getElementById('resultFooter').style.display = 'block';
+  // Mobile footer
+  document.getElementById('replayBtnMobile').style.display = 'inline';
+  document.getElementById('replayBtnMobile').onclick = (e) => { e.preventDefault(); copyToClipboard(replayUrl); };
   
   // Submit to Firebase leaderboard
   if (!replayMode) {
@@ -1567,7 +1577,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.41 loaded');
+console.log('Ball Rush v8.0.42 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
@@ -1737,5 +1747,10 @@ function closeStatsModal() {
   if (window._statsPaused) { window._statsPaused = false; gameRunning = true; requestAnimationFrame(gameLoop); }
 }
 </script>
+<div id="mobileFooter" style="display:none; position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.85); padding:8px 12px; gap:16px; align-items:center; justify-content:center; z-index:200; font-size:12px;">
+  <a href="#" id="verifyLinkMobile" style="color:#4af; font-family:monospace; display:none;">✅ Verify</a>
+  <a href="#" id="replayBtnMobile" style="color:#88f; display:none;">📋 Copy Replay</a>
+</div>
+
 </body>
 </html>
