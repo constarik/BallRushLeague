@@ -171,8 +171,7 @@
     .seed-display { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 5px; font-family: monospace; }
     #langSelect { background: #1a472a; color: white; border: 1px solid #4CAF50; border-radius: 5px; padding: 8px; font-size: 14px; cursor: pointer; min-width: 80px; }
     #langSelect option { background: #1a472a; color: white; }
-    #replayLink { display: none !important; }
-    #verifyLink { display: none !important; }
+    #leaderboard:empty { display: none; }
     #mobileFooter { display: none !important; }
     #statsBtn { display: none; }
     @media (max-width: 500px) { #statsBtn { display: inline-block !important; } }
@@ -213,7 +212,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.56</div>
+      <div class="subtitle">LEAGUE v8.0.57</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -333,7 +332,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.56';
+const GAME_VERSION = 'v8.0.57';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1602,7 +1601,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.56 loaded');
+console.log('Ball Rush v8.0.57 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
