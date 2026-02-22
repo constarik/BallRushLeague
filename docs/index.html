@@ -207,7 +207,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.44</div>
+      <div class="subtitle">LEAGUE v8.0.45</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -277,6 +277,7 @@
 
   <div class="result" id="result">
     <h2 data-i18n="youWon">You Won!</h2>
+    <button onclick="document.getElementById('result').classList.remove('show')" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;">✕</button>
     <div class="amount">$<span id="finalWin">0</span></div>
     <div id="resultFooter" style="display:none; margin-top:8px; font-size:11px;">
       <div id="seedDisplayResult" style="font-family:monospace; color:#8fb; margin-bottom:4px;"></div>
@@ -321,7 +322,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.44';
+const GAME_VERSION = 'v8.0.45';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1517,7 +1518,7 @@ document.getElementById('playBtn').onclick = () => {
 };
 
 document.getElementById('result').onclick = (e) => {
-  if (e.target === document.getElementById('result') || e.target.tagName === 'H2') {
+  if (e.target === document.getElementById('result')) {
     document.getElementById('result').classList.remove('show');
   }
 };
@@ -1581,7 +1582,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.44 loaded');
+console.log('Ball Rush v8.0.45 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
