@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.32</title>
+  <title>Ball Rush League v8.0.33</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -206,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.32</div>
+      <div class="subtitle">LEAGUE v8.0.33</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -277,6 +277,9 @@
   <div class="result" id="result">
     <h2 data-i18n="youWon">You Won!</h2>
     <div class="amount">$<span id="finalWin">0</span></div>
+    <div id="verifyLinkResult" style="display:none; margin-top:6px; font-size:11px;">
+      <a href="#" id="verifyLinkBtn" style="color:#4af; font-family:monospace;">✅ Verify fair play</a>
+    </div>
   </div>
 
   <div class="sound-test-panel" id="soundTestPanel">
@@ -315,7 +318,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.32';
+const GAME_VERSION = 'v8.0.33';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1386,6 +1389,7 @@ async function startGame(seed) {
   document.getElementById('ballCountInput').disabled = true;
   document.getElementById('result').classList.remove('show');
   document.getElementById('replayLink').style.display = 'none';
+  document.getElementById('verifyLinkResult').style.display = 'none';
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
@@ -1430,6 +1434,9 @@ async function endGame() {
           });
           document.getElementById('verifyLink').style.display = 'inline';
           document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false);
+          // Also show in result panel
+          document.getElementById('verifyLinkResult').style.display = 'block';
+          document.getElementById('verifyLinkBtn').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
         }
         console.log('✅ Validated:', data);
       } else {
@@ -1558,7 +1565,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.32 loaded');
+console.log('Ball Rush v8.0.33 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
