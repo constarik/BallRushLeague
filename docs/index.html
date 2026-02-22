@@ -207,7 +207,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.45</div>
+      <div class="subtitle">LEAGUE v8.0.46</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -230,6 +230,11 @@
       <div class="sb"><div class="sl" data-i18n="stTime">💀 TIMEOUTS</div><div class="sv" id="sTimeouts">0</div></div>
     </div>
     <div id="leaderboard" style="background:rgba(0,0,0,0.3);border-radius:6px;padding:6px;margin-top:6px;"></div>
+    <div id="desktopGameLinks" style="display:none; margin-top:8px; font-size:11px; padding:6px; background:rgba(0,0,0,0.2); border-radius:6px;">
+      <div id="seedDisplayDesk" style="font-family:monospace; color:#8fb; margin-bottom:4px;"></div>
+      <a href="#" id="verifyLinkDesk" style="color:#4af; font-family:monospace; margin-right:10px; display:none;">✅ Verify</a>
+      <a href="#" id="replayLinkDesk" style="color:#88f;">📋 Скопировать ссылку</a>
+    </div>
     <div id="eventLog"></div>
   </div>
 
@@ -266,12 +271,12 @@
       <button id="statsBtn" onclick="openStatsModal()">📊</button>
     </div>
     <div class="status" id="status"></div>
-    <div class="seed-display" id="seedDisplay"></div>
-    <div style="font-size:10px; margin-top:3px;">
-      <a href="#" id="verifyLink" style="display:none; color:#4af; font-family:monospace;">✅ Verify</a>
+    <div class="seed-display" id="seedDisplay" style="display:none;"></div>
+    <div style="display:none;">
+      <a href="#" id="verifyLink">✅ Verify</a>
     </div>
-    <div id="replayLink" style="display:none; margin-top:8px; font-size:11px;">
-      <a href="#" id="replayBtn" style="color:#88f;">📋 <span data-i18n="copyReplay">Copy Replay URL</span></a>
+    <div id="replayLink" style="display:none;">
+      <a href="#" id="replayBtn"></a>
     </div>
   </div>
 
@@ -322,7 +327,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.45';
+const GAME_VERSION = 'v8.0.46';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1398,6 +1403,9 @@ async function startGame(seed) {
   document.getElementById('seedDisplayResult').textContent = '';
   document.getElementById('verifyLinkMobile').style.display = 'none';
   document.getElementById('replayBtnMobile').style.display = 'none';
+  document.getElementById('desktopGameLinks').style.display = 'none';
+  document.getElementById('seedDisplayDesk').textContent = '';
+  document.getElementById('verifyLinkDesk').style.display = 'none';
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
@@ -1439,6 +1447,9 @@ async function endGame() {
             const label = (ok ? '✅ ' : '❌ ') + 'seed: #' + hashSeed(data.serverSeed);
             document.getElementById('seedDisplay').textContent = label;
             document.getElementById('seedDisplayResult').textContent = label;
+            document.getElementById('seedDisplayDesk').textContent = label;
+            document.getElementById('verifyLinkDesk').style.display = 'inline';
+            document.getElementById('verifyLinkDesk').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
             if (!ok) alert('❌ PROVABLY FAIR VERIFICATION FAILED!');
           });
           document.getElementById('verifyLink').style.display = 'inline';
@@ -1462,6 +1473,9 @@ async function endGame() {
   // Replay URL
   const replayUrl = `${location.origin}${location.pathname}?replay=1&seed=${currentSeed}&balls=${gameState.numBalls}`;
   document.getElementById('replayBtn').onclick = () => { copyToClipboard(replayUrl); };
+  document.getElementById('replayLinkDesk').onclick = (e) => { e.preventDefault(); copyToClipboard(replayUrl); };
+  document.getElementById('desktopGameLinks').style.display = 'block';
+  document.getElementById('seedDisplayDesk').textContent = '⏳ verifying...';
   document.getElementById('replayLink').style.display = 'block';
   document.getElementById('replayBtnResult').onclick = (e) => { e.preventDefault(); copyToClipboard(replayUrl); };
   document.getElementById('resultFooter').style.display = 'block';
@@ -1582,7 +1596,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.45 loaded');
+console.log('Ball Rush v8.0.46 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
