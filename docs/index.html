@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.33</title>
+  <title>Ball Rush League v8.0.34</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -206,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.33</div>
+      <div class="subtitle">LEAGUE v8.0.34</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -277,8 +277,10 @@
   <div class="result" id="result">
     <h2 data-i18n="youWon">You Won!</h2>
     <div class="amount">$<span id="finalWin">0</span></div>
-    <div id="verifyLinkResult" style="display:none; margin-top:6px; font-size:11px;">
-      <a href="#" id="verifyLinkBtn" style="color:#4af; font-family:monospace;">✅ Verify fair play</a>
+    <div id="resultFooter" style="display:none; margin-top:8px; font-size:11px; display:none;">
+      <div id="seedDisplayResult" style="font-family:monospace; color:#8fb; margin-bottom:4px;"></div>
+      <a href="#" id="verifyLinkBtn" style="color:#4af; font-family:monospace; margin-right:10px;">✅ Verify</a>
+      <a href="#" id="replayBtnResult" style="color:#88f;">📋 <span data-i18n="copyReplay">Скопировать ссылку</span></a>
     </div>
   </div>
 
@@ -318,7 +320,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.33';
+const GAME_VERSION = 'v8.0.34';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1390,6 +1392,7 @@ async function startGame(seed) {
   document.getElementById('result').classList.remove('show');
   document.getElementById('replayLink').style.display = 'none';
   document.getElementById('verifyLinkResult').style.display = 'none';
+  document.getElementById('resultFooter').style.display = 'none';
   
   console.log('🎮 Starting game: seed=' + currentSeed + ', balls=' + numBalls);
   
@@ -1427,15 +1430,14 @@ async function endGame() {
         // Provably fair: reveal serverSeed
         if (data.serverSeed !== undefined) {
           const hashSeed = s => { let h = 0; for(let i=0; i<s.toString().length; i++) h = (Math.imul(31,h)+s.toString().charCodeAt(i))|0; return (h>>>0).toString(16).padStart(8,'0').toUpperCase(); };
-          // Auto-verify silently
           verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, true).then(ok => {
-            document.getElementById('seedDisplay').textContent = (ok ? '✅ ' : '❌ ') + 'seed: #' + hashSeed(data.serverSeed);
+            const label = (ok ? '✅ ' : '❌ ') + 'seed: #' + hashSeed(data.serverSeed);
+            document.getElementById('seedDisplay').textContent = label;
+            document.getElementById('seedDisplayResult').textContent = label;
             if (!ok) alert('❌ PROVABLY FAIR VERIFICATION FAILED!');
           });
           document.getElementById('verifyLink').style.display = 'inline';
           document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false);
-          // Also show in result panel
-          document.getElementById('verifyLinkResult').style.display = 'block';
           document.getElementById('verifyLinkBtn').onclick = (e) => { e.preventDefault(); verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed, false); };
         }
         console.log('✅ Validated:', data);
@@ -1453,6 +1455,8 @@ async function endGame() {
   const replayUrl = `${location.origin}${location.pathname}?replay=1&seed=${currentSeed}&balls=${gameState.numBalls}`;
   document.getElementById('replayBtn').onclick = () => { navigator.clipboard.writeText(replayUrl); };
   document.getElementById('replayLink').style.display = 'block';
+  document.getElementById('replayBtnResult').onclick = (e) => { e.preventDefault(); navigator.clipboard.writeText(replayUrl); };
+  document.getElementById('resultFooter').style.display = 'block';
   
   // Submit to Firebase leaderboard
   if (!replayMode) {
@@ -1565,7 +1569,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.33 loaded');
+console.log('Ball Rush v8.0.34 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
