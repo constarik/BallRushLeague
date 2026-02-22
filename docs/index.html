@@ -47,7 +47,7 @@
     }
     .side-panel {
       width: 220px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
-      align-self: flex-start; margin-top: 0;
+      align-self: flex-start; margin-top: 0; overflow: hidden;
     }
     .sg { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
     .sb { background: rgba(0,0,0,0.3); padding: 5px 7px; border-radius: 6px; font-size: 0.75rem; }
@@ -213,7 +213,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.53</div>
+      <div class="subtitle">LEAGUE v8.0.54</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -333,7 +333,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.53';
+const GAME_VERSION = 'v8.0.54';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1602,7 +1602,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.53 loaded');
+console.log('Ball Rush v8.0.54 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
