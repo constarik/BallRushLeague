@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.25</title>
+  <title>Ball Rush League v8.0.26</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -206,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.25</div>
+      <div class="subtitle">LEAGUE v8.0.26</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -266,6 +266,9 @@
     </div>
     <div class="status" id="status"></div>
     <div class="seed-display" id="seedDisplay"></div>
+    <div style="font-size:10px; margin-top:3px;">
+      <a href="#" id="verifyLink" style="display:none; color:#4af; font-family:monospace;">✅ Verify</a>
+    </div>
     <div id="replayLink" style="display:none; margin-top:8px; font-size:11px;">
       <a href="#" id="replayBtn" style="color:#88f;">📋 <span data-i18n="copyReplay">Copy Replay URL</span></a>
     </div>
@@ -312,7 +315,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.25';
+const GAME_VERSION = 'v8.0.26';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -824,6 +827,7 @@ let gameState = null;
 let gameRunning = false;
 let currentSeed = null;
 let currentNick = '';
+let currentServerSeedHash = null;
 
 // ===== FIREBASE =====
 const FB_CONFIG = {
@@ -1338,8 +1342,12 @@ async function startGame(seed) {
       const data = await response.json();
       currentGameId = data.gameId;
       seed = data.seed;
+      currentServerSeedHash = data.serverSeedHash || null;
       demoBalance = data.balance;
       document.getElementById('balanceAmount').textContent = '$' + demoBalance.toFixed(2);
+      if (currentServerSeedHash) {
+        document.getElementById('seedDisplay').textContent = '🔒 hash: ' + currentServerSeedHash.substring(0, 16) + '...';
+      }
       console.log('✅ Game started:', data);
     } catch (err) {
       alert('Cannot connect to server: ' + err.message);
@@ -1390,6 +1398,13 @@ async function endGame() {
       if (data.valid) {
         demoBalance = data.newBalance;
         document.getElementById('balanceAmount').textContent = '$' + demoBalance.toFixed(2);
+        // Provably fair: reveal serverSeed
+        if (data.serverSeed !== undefined) {
+          const hashSeed = s => { let h = 0; for(let i=0; i<s.toString().length; i++) h = (Math.imul(31,h)+s.toString().charCodeAt(i))|0; return (h>>>0).toString(16).padStart(8,'0').toUpperCase(); };
+          document.getElementById('seedDisplay').textContent = '🔓 seed: #' + hashSeed(data.serverSeed);
+          document.getElementById('verifyLink').style.display = 'inline';
+          document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash);
+        }
         console.log('✅ Validated:', data);
       } else {
         console.error('❌ Validation failed:', data);
@@ -1517,7 +1532,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.25 loaded');
+console.log('Ball Rush v8.0.26 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
@@ -1630,7 +1645,18 @@ window.addEventListener('resize', alignSidePanel);
 </div>
 
 <script>
-function openStatsModal() {
+async function verifyGame(serverSeed, serverSeedHash) {
+  // Verify: SHA256(serverSeed) == serverSeedHash
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(serverSeed.toString()));
+  const computed = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  if (computed === serverSeedHash) {
+    alert('✅ VERIFIED!\n\nServerSeed: ' + serverSeed + '\nHash: ' + serverSeedHash.substring(0,32) + '...\n\nHash matches — game was fair!');
+  } else {
+    alert('❌ VERIFICATION FAILED!\n\nComputed: ' + computed.substring(0,32) + '...\nExpected: ' + serverSeedHash.substring(0,32) + '...');
+  }
+}
+
   if (gameRunning) { gameRunning = false; window._statsPaused = true; }
   const sp = document.querySelector('.side-panel');
   const content = document.getElementById('statsModalContent');
