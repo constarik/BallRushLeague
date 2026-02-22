@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.26</title>
+  <title>Ball Rush League v8.0.27</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -206,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.26</div>
+      <div class="subtitle">LEAGUE v8.0.27</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -315,7 +315,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.26';
+const GAME_VERSION = 'v8.0.27';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -828,6 +828,7 @@ let gameRunning = false;
 let currentSeed = null;
 let currentNick = '';
 let currentServerSeedHash = null;
+let currentClientSeed = null;
 
 // ===== FIREBASE =====
 const FB_CONFIG = {
@@ -1329,10 +1330,12 @@ async function startGame(seed) {
   if (!seed && !replayMode) {
     // Get seed from server
     try {
+      const clientSeed = Math.floor(Math.random() * 0x7FFFFFFF);
+      currentClientSeed = clientSeed;
       const response = await fetch(`${SERVER_URL}/new_game`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nick: currentNick, ballCount: numBalls })
+        body: JSON.stringify({ nick: currentNick, ballCount: numBalls, clientSeed })
       });
       if (!response.ok) {
         const error = await response.json();
@@ -1403,7 +1406,7 @@ async function endGame() {
           const hashSeed = s => { let h = 0; for(let i=0; i<s.toString().length; i++) h = (Math.imul(31,h)+s.toString().charCodeAt(i))|0; return (h>>>0).toString(16).padStart(8,'0').toUpperCase(); };
           document.getElementById('seedDisplay').textContent = '🔓 seed: #' + hashSeed(data.serverSeed);
           document.getElementById('verifyLink').style.display = 'inline';
-          document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash);
+          document.getElementById('verifyLink').onclick = () => verifyGame(data.serverSeed, data.serverSeedHash, data.clientSeed, data.finalSeed);
         }
         console.log('✅ Validated:', data);
       } else {
@@ -1532,7 +1535,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.26 loaded');
+console.log('Ball Rush v8.0.27 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
@@ -1645,15 +1648,17 @@ window.addEventListener('resize', alignSidePanel);
 </div>
 
 <script>
-async function verifyGame(serverSeed, serverSeedHash) {
-  // Verify: SHA256(serverSeed) == serverSeedHash
+async function verifyGame(serverSeed, serverSeedHash, clientSeed, finalSeed) {
   const enc = new TextEncoder();
   const buf = await crypto.subtle.digest('SHA-256', enc.encode(serverSeed.toString()));
   const computed = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  if (computed === serverSeedHash) {
-    alert('✅ VERIFIED!\n\nServerSeed: ' + serverSeed + '\nHash: ' + serverSeedHash.substring(0,32) + '...\n\nHash matches — game was fair!');
+  const hashOk = computed === serverSeedHash;
+  const computedFinal = (serverSeed ^ clientSeed) % 0x7FFFFFFF || 1;
+  const seedOk = computedFinal === finalSeed;
+  if (hashOk && seedOk) {
+    alert('✅ VERIFIED!\n\nServerSeed: ' + serverSeed + '\nClientSeed: ' + clientSeed + '\nFinalSeed: ' + finalSeed + '\n\nHash ✓  FinalSeed ✓\nGame was provably fair!');
   } else {
-    alert('❌ VERIFICATION FAILED!\n\nComputed: ' + computed.substring(0,32) + '...\nExpected: ' + serverSeedHash.substring(0,32) + '...');
+    alert('❌ VERIFICATION FAILED!\n\nHash: ' + (hashOk ? '✓' : '✗') + '\nFinalSeed: ' + (seedOk ? '✓' : '✗'));
   }
 }
 
