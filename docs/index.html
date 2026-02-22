@@ -207,7 +207,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.46</div>
+      <div class="subtitle">LEAGUE v8.0.47</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -267,7 +267,7 @@
         <option value="pt">🇧🇷 PT</option>
         <option value="zh">🇨🇳 ZH</option>
       </select>
-      <button id="infoBtn">ℹ <span data-i18n="info">INFO</span></button>
+      <button id="infoBtn" style="background:#1a6adb; color:#fff; border:none;">ℹ <span data-i18n="info">INFO</span></button>
       <button id="statsBtn" onclick="openStatsModal()">📊</button>
     </div>
     <div class="status" id="status"></div>
@@ -327,7 +327,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.46';
+const GAME_VERSION = 'v8.0.47';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1596,7 +1596,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.46 loaded');
+console.log('Ball Rush v8.0.47 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
