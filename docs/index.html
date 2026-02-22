@@ -30,7 +30,6 @@
       body:has(.start-overlay:not(.hidden)) .progressive { visibility: hidden !important; }
       .progressive { display: none !important; }
       #seedDisplay { display: none !important; }
-      #replayLink { display: none !important; }
     }
     body {
       background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 100%);
@@ -204,7 +203,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.40</div>
+      <div class="subtitle">LEAGUE v8.0.41</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -318,7 +317,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.40';
+const GAME_VERSION = 'v8.0.41';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1568,7 +1567,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.40 loaded');
+console.log('Ball Rush v8.0.41 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
