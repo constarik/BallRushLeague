@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <title>Ball Rush League v8.0.29</title>
+  <title>Ball Rush League v8.0.30</title>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRP1QX4878"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TRP1QX4878');</script>
@@ -206,7 +206,7 @@
         <span class="lang-flag" data-lang="zh">🇨🇳</span>
       </div>
       <h1>⚽ BALL RUSH</h1>
-      <div class="subtitle">LEAGUE v8.0.29</div>
+      <div class="subtitle">LEAGUE v8.0.30</div>
       <label data-i18n="nickLabel">YOUR NICK</label>
       <div class="nick-display" id="nickDisplay"></div>
       <div class="nick-shuffle" id="nickShuffle" title="Random">🎲</div>
@@ -315,7 +315,7 @@
 // ========================================
 // Ball Rush League v7.1.0 - Single Engine Architecture
 // ========================================
-const GAME_VERSION = 'v8.0.29';
+const GAME_VERSION = 'v8.0.30';
 const SERVER_URL = 'https://ball-rush-server.onrender.com';
 
 // ===== AUDIO DATA (base64) =====
@@ -1202,7 +1202,11 @@ function updateStats() {
   document.getElementById('ballsLeft').textContent = gameState.numBalls - gameState.ballsSpawned + gameState.balls.length;
   document.getElementById('winDisplay').textContent = '$' + gameState.totalWin;
   document.getElementById('progValue').textContent = '×' + gameState.progressive;
-  document.getElementById('nickIngame').textContent = '🎮 ' + currentNick + '   P:' + gameState.progressive + '  T:' + gameState.timeoutCount;
+  const isMobile = window.innerWidth <= 500;
+  const nickText = isMobile
+    ? '🎮 ' + currentNick + '   P:' + gameState.progressive + '  T:' + gameState.timeoutCount
+    : '🎮 ' + currentNick;
+  document.getElementById('nickIngame').textContent = nickText;
   
   // Timeout dots - toggle class only, no DOM rebuild
   const dots = document.getElementById('timeoutBar').children;
@@ -1554,7 +1558,7 @@ document.getElementById('langSelect').value = currentLang;
 // Initialize Firebase
 initFirebase();
 
-console.log('Ball Rush v8.0.29 loaded');
+console.log('Ball Rush v8.0.30 loaded');
 
 // Align side-panel top with canvas top
 function alignSidePanel() {
